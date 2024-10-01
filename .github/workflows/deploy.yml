@@ -20,11 +20,17 @@ jobs:
 
       # Install dependencies
       - name: Install dependencies
-        run: npm install
+        run: |
+          sudo apt-get update && sudo apt-get install -y tar
+          npm install
 
       # Build the Docusaurus project
       - name: Build Docusaurus
         run: npm run build
+
+        # Compress the build folder into a tar.gz archive
+      - name: Compress build folder
+        run: tar -czf build.tar.gz build
 
       # Upload the build folder to the VPS using SSH and SCP
       - name: Deploy to VPS
@@ -32,16 +38,7 @@ jobs:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
           VPS_PASSWORD: ${{ secrets.VPS_PASSWORD }}
-          VPS_PATH: ${{ secrets.VPS_PATH }}
+          VPS_STAGING_PATH: ${{ secrets.VPS_STAGING_PATH }}
         run: |
-          # Install SSHpass to allow SSH password authentication
           sudo apt-get update && sudo apt-get install -y sshpass
-
-          # Use SSHpass to copy files to the VPS without showing the password in logs
-          sshpass -p "$VPS_PASSWORD" scp -o StrictHostKeyChecking=no -r ./build/* $VPS_USER@$VPS_HOST:$VPS_PATH
-
-        #   # Run SSH commands to handle post-deployment tasks
-        #   sshpass -p "$VPS_PASSWORD" ssh -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST << EOF
-        #     # Temporarily disable sudo password prompt for this session
-        #     echo "$VPS_PASSWORD" | sudo -S systemctl restart nginx
-        #   EOF
+          sshpass -p "$VPS_PASSWORD" scp -o StrictHostKeyChecking=no build.tar.gz $VPS_USER@$VPS_HOST:$VPS_STAGING_PATH

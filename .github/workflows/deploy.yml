@@ -28,11 +28,11 @@ jobs:
       - name: Build Docusaurus
         run: npm run build
 
-        # Compress the build folder into a tar.gz archive
+      # Compress the build folder into a tar.gz archive
       - name: Compress build folder
         run: tar -czf build.tar.gz build
 
-      # Upload the build folder to the VPS using SSH and SCP
+      # Upload and deploy the build to the VPS
       - name: Deploy to VPS
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
@@ -42,3 +42,6 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y sshpass
           sshpass -p "$VPS_PASSWORD" scp -o StrictHostKeyChecking=no build.tar.gz $VPS_USER@$VPS_HOST:$VPS_STAGING_PATH
+          sshpass -p "$VPS_PASSWORD" ssh -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST << EOF
+          echo "$VPS_PASSWORD" | sudo -S /$VPS_STAGING_PATH/deploy.sh
+          EOF

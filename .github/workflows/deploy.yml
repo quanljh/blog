@@ -1,0 +1,47 @@
+name: Deploy Docusaurus to VPS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18" # Adjust the Node.js version if needed
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Build the Docusaurus project
+      - name: Build Docusaurus
+        run: npm run build
+
+      # Upload the build folder to the VPS using SSH and SCP
+      - name: Deploy to VPS
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_PASSWORD: ${{ secrets.VPS_PASSWORD }}
+          VPS_PATH: ${{ secrets.VPS_PATH }}
+        run: |
+          # Install SSHpass to allow SSH password authentication
+          sudo apt-get update && sudo apt-get install -y sshpass
+
+          # Use SSHpass to copy files to the VPS without showing the password in logs
+          sshpass -p "$VPS_PASSWORD" scp -o StrictHostKeyChecking=no -r ./build/* $VPS_USER@$VPS_HOST:$VPS_PATH
+
+        #   # Run SSH commands to handle post-deployment tasks
+        #   sshpass -p "$VPS_PASSWORD" ssh -o StrictHostKeyChecking=no $VPS_USER@$VPS_HOST << EOF
+        #     # Temporarily disable sudo password prompt for this session
+        #     echo "$VPS_PASSWORD" | sudo -S systemctl restart nginx
+        #   EOF

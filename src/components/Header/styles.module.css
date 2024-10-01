@@ -82,6 +82,10 @@
     font-size: 2rem;
   }
 
+  .use {
+    stroke-width: 5px;
+  }
+
   .hidden {
     font-size: 2rem;
   }
@@ -98,6 +102,10 @@
 
   .text {
     font-size: 3rem;
+  }
+
+  .use {
+    stroke-width: 8px;
   }
 
   .hidden {

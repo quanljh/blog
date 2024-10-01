@@ -1,0 +1,57 @@
+@keyframes springBounce {
+  0% {
+    opacity: 0;
+    transform: translate(150px, 150px) scale(0);
+  }
+  35% {
+    opacity: 1;
+    transform: translate(-5px, -5px) scale(1.03); /* Overshoot larger */
+  }
+  70% {
+    opacity: 1;
+    transform: translate(0px, 0px) scale(1); /* Overshoot larger */
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0px, 0px) scale(1); /* Final state */
+  }
+}
+.animate {
+  animation: springBounce 1s cubic-bezier(0.23, 1, 0.67, 1.16) forwards;
+  opacity: 0;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.svg {
+  overflow: visible;
+  fill: #2196f3;
+  height: 1px;
+  width: 1px;
+}
+
+.use {
+  stroke: white;
+  stroke-width: 13px;
+  stroke-linejoin: round;
+}
+
+.text {
+  font-weight: 300;
+  font-size: 6rem;
+  font-family: Candyshop;
+  color: #2196f3;
+}
+
+.hidden {
+  display: inline-block; /* Make sure the div behaves like an inline element */
+  font-weight: 300;
+  font-size: 6rem;
+  font-family: Candyshop;
+  visibility: hidden;
+  letter-spacing: 5px;
+}

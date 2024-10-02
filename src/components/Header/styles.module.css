@@ -18,6 +18,8 @@
 }
 
 .heroBanner {
+  display: flex;
+  align-items: center;
   height: 100vh;
   padding: 4rem 0;
   background-image: url("/img/background.jpg");
@@ -27,6 +29,11 @@
   text-align: center;
   position: relative;
   overflow: hidden;
+  color: var(--ifm-font-color-base-inverse);
+}
+
+.animateInitial {
+  opacity: 0;
 }
 
 .animate {

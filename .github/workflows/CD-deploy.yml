@@ -1,4 +1,4 @@
-name: Deploy Docusaurus to VPS
+name: Deploy site
 
 on:
   workflow_dispatch:
@@ -10,13 +10,13 @@ jobs:
     steps:
       # Checkout the repository
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Set up Node.js
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "18" # Adjust the Node.js version if needed
+          node-version: "20" # Adjust the Node.js version if needed
 
       # Install dependencies
       - name: Install dependencies
@@ -37,9 +37,25 @@ jobs:
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_KEY: ${{ secrets.VPS_KEY }}
           VPS_PASSWORD: ${{ secrets.VPS_PASSWORD }}
           VPS_STAGING_PATH: ${{ secrets.VPS_STAGING_PATH }}
         run: |
-          sudo apt-get update && sudo apt-get install -y sshpass
-          sshpass -p "$VPS_PASSWORD" scp -o StrictHostKeyChecking=no build.tar.gz $VPS_USER@$VPS_HOST:$VPS_STAGING_PATH
-          sshpass -p "$VPS_PASSWORD" ssh -o StrictHostKeyChecking=no -o LogLevel=QUIET -o UserKnownHostsFile=/dev/null -t $VPS_USER@$VPS_HOST "echo '$VPS_PASSWORD' | sudo -S /$VPS_STAGING_PATH/deploy.sh"
+          # Create the .ssh directory if it doesn't exist
+          mkdir -p ~/.ssh
+
+          # Install the SSH private key to the .ssh folder
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "$VPS_KEY" > ~/.ssh/id_rsa
+
+          # Add the SSH host to the known_hosts file to avoid host verification prompts
+          ssh-keyscan -H $VPS_HOST > ~/.ssh/known_hosts
+
+          # Upload the build.tar.gz file to the VPS
+          scp build.tar.gz $VPS_USER@$VPS_HOST:$VPS_STAGING_PATH/
+
+          # Run the deploy script on the VPS
+          ssh -o LogLevel=QUIET $VPS_USER@$VPS_HOST "echo '$VPS_PASSWORD' | sudo -S /$VPS_STAGING_PATH/deploy.sh"
+
+      - name: Clean up
+        run: rm -rf ~/.ssh

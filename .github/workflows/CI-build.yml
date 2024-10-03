@@ -1,4 +1,4 @@
-name: Test deployment
+name: Test build
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   test-deploy:
-    name: Test deployment
+    name: Test build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 1
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: npm
       - name: npm install
         run: npm install

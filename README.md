@@ -1,10 +1,6 @@
-<p >
-    <a href="https://github.com/quanljh/blog/actions/workflows/CI-build.yml" alt="Test build">
-        <img src="https://github.com/quanljh/blog/actions/workflows/CI-build.yml/badge.svg" />
-    </a>
-    <a href="https://github.com/quanljh/blog/actions/workflows/CD-deploy.yml.yml" alt="Deploy site">
-        <img src="https://github.com/quanljh/blog/actions/workflows/CD-deploy.yml/badge.svg" />
-    </a>
+<p align="left">
+<a href="https://github.com/quanljh/blog/actions/workflows/CI-build.yml" alt="CI-build"><img src="https://github.com/quanljh/blog/actions/workflows/CI-build.yml/badge.svg" /></a>
+<a href="https://github.com/quanljh/blog/actions/workflows/CD-deploy.yml" alt="CD-deploy"><img src="https://github.com/quanljh/blog/actions/workflows/CD-deploy.yml/badge.svg" /></a>
 </p>
 
 # Website

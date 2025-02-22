@@ -36,6 +36,7 @@ jobs:
       - name: Deploy to VPS
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_HOST_PORT: ${{ secrets.VPS_HOST_PORT }}
           VPS_USER: ${{ secrets.VPS_USER }}
           VPS_KEY: ${{ secrets.VPS_KEY }}
           VPS_PASSWORD: ${{ secrets.VPS_PASSWORD }}
@@ -52,10 +53,10 @@ jobs:
           ssh-keyscan -H $VPS_HOST > ~/.ssh/known_hosts
 
           # Upload the build.tar.gz file to the VPS
-          scp build.tar.gz $VPS_USER@$VPS_HOST:$VPS_STAGING_PATH/
+          scp -P $VPS_HOST_PORT build.tar.gz $VPS_USER@$VPS_HOST:$VPS_STAGING_PATH/
 
           # Run the deploy script on the VPS
-          ssh -o LogLevel=QUIET $VPS_USER@$VPS_HOST "echo '$VPS_PASSWORD' | sudo -S /$VPS_STAGING_PATH/deploy.sh"
+          ssh -p $VPS_HOST_PORT -o LogLevel=QUIET $VPS_USER@$VPS_HOST "echo '$VPS_PASSWORD' | sudo -S /$VPS_STAGING_PATH/deploy.sh"
 
       - name: Clean up
         run: rm -rf ~/.ssh
